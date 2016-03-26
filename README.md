@@ -1,0 +1,38 @@
+#Python Package Manager
+
+A python package manager modelled after npm, the ONE TRUE PACKAGE MANAGER.
+
+Let's face it, python package management is a failure. 
+
+- Support for project-specific packages is non-existent
+- Virtualenv is a disaster
+- Keeping track of requirements.txt is impossible
+- No nested dependencies.
+
+PPM will fix this by doing the following:
+
+- Track dependencies in `package.json` the same way as NodeJS
+
+		{
+			"pythonDependencies": {
+				"djangorestframework": "^3.3.3",
+				"django": "^1.9.1"
+			},
+			"pythonDevDependencies": {
+				"django-debug-toolbar": "1.0.0"
+			}
+		}
+
+- Automatic management of nested dependencies. Packages that are installed via nested dependency are removed automatically once packages requiring it are removed
+
+- Simplify unreasonably verbose pip commands such as `install --upgrade <package> >> requirements.txt` and `list --outdated` to more human friendly npm-like commands. `update`, `outdated`, `install --save`, etc
+
+PPM is also a strong proponent for microlibraries. Reusing productive code like what the Node community has done with Left-Pad is what python needs to move forward in the webscale era.
+
+## Installation
+
+This project is not complete
+
+## PPM Limitations
+
+PPM is all about making package management local. It is not meant to be a repalcement for setuptools or pip. PPM continues to use pip, setuptools, and PYPI in the background.
