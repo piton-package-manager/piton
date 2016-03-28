@@ -44,8 +44,9 @@ This project is not complete
 | Command       | Status        |
 | ------------- |:-------------:|
 | outdated      | working       |
-| update        | in-progres    |
-| install       | in-progres    |
+| update        | in-progress   |
+| install       | in-progress   |
+| list          | planned       |
 | prune         | planned       |
 
 ## PPM Limitations
