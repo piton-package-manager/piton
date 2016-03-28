@@ -1,7 +1,7 @@
 {
   "pythonDependencies": {
     "djangorestframework": "^3.3.3",
-    "django": "^6.2.1"
+    "django": "^1.9.1"
   },
   "pythonDevDependencies": {}
 }
