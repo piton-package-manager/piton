@@ -17,7 +17,7 @@ Let's face it, python package management is a failure.
 
 PPM will fix this by doing the following:
 
-- Track dependencies in `package.json` the same way as NodeJS
+- Track dependencies in `package.json` the with NodeJS-like semantic versioning
 
 		{
 			"pythonDependencies": {
@@ -38,6 +38,15 @@ PPM is also a strong proponent for microlibraries. Reusing productive code like 
 ## Installation
 
 This project is not complete
+
+## Features
+
+| Command       | Status        |
+| ------------- |:-------------:|
+| outdated      | working       |
+| update        | in-progres    |
+| install       | in-progres    |
+| prune         | planned       |
 
 ## PPM Limitations
 
