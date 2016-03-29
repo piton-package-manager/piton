@@ -22,7 +22,7 @@ def cheat_semver(version):
 	# Stupid python versioning has "1.9rc2.0"
 	if re.search('[a-zA-Z]', version.split(".")[1]):
 		split = version.split(".")
-		version = split[0]+"."+re.sub(r'[a-zA-Z]', '', split[1])+"."+split[2]
+		version = split[0]+"."+re.compile('[a-zA-Z]').split(split[1])[0]+"."+split[2]
 	return version
 
 def sort_versions(versions):
