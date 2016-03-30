@@ -44,7 +44,8 @@ This project is not complete
 | Command       | Status        |
 | ------------- |:-------------:|
 | outdated      | working       |
-| install       | functional    |
+| install       | working       |
+| remove        | working       |
 | update        | in-progress   |
 | list          | planned       |
 | prune         | planned       |

@@ -5,6 +5,7 @@ import argparse
 from utils.pypi_api import get_avaliable_versions
 from utils.version import wanted_version, sort_versions
 from utils import sneak_config
+import pip
 
 def get_package_info(directory, package):
 	top_level_packs = []
@@ -16,6 +17,7 @@ def get_package_info(directory, package):
 		version = metadata.get("version", "")
 		name = metadata.get("name", "")
 	return {
+		"dist_info": package,
 		"top_level": top_level_packs,
 		"version": version,
 		"name": name
@@ -27,6 +29,13 @@ def get_packages(directory):
 		if dirname[-10:] == ".dist-info" and os.path.isdir(os.path.join(directory, dirname)):
 			packages.append(get_package_info(directory, dirname))
 	return packages
+
+def get_package(directory, package):
+	packages = get_packages("python_modules")
+	possible_package = list(filter(lambda p: p["name"] == package, packages))
+	if len(possible_package) == 0:
+		return None
+	return possible_package[-1:][0]
 
 def get_dependencies():
 	with open(os.path.join('package.json'), 'r') as infile:
@@ -86,28 +95,68 @@ def command_outdated():
 
 	display_outdated(package_metadatas)
 
-def install(package, version=None):
+def perform_install(package, version=None):
 	sneak_config.sneak_config_setup()
 	if version:
 		install_item = package+"=="+version
 	else:
 		install_item = package
-	pip.main(['install', install_item, "--target=python_modules", "--install-option='--prefix='"])
+	print(install_item)
+	pip.main(['install', install_item, "--target=python_modules"])
 	sneak_config.sneak_config_remove()
 
-def command_install(package):
+def install_latest(package):
+	avaliable_versions = get_avaliable_versions(package)
+	if avaliable_versions == None:
+		print("Unable to find package "+package)
+		return None
+	versions = list(map(lambda version: version["version"], avaliable_versions))
+	latest_version = sort_versions(versions)[-1:][0]
+	perform_install(package, latest_version)
+	return latest_version
+
+def command_install(package, save):
+	def package_json_if_save(save, version_markup):
+		if save:
+			dependencies = get_dependencies()
+			dependencies[package] = version_markup
+			write_dependencies(dependencies)
 	if not package:
 		print(get_dependencies())
 	else:
 		dependencies = get_dependencies()
 		if package in dependencies:
-			pass
-		else:
-			versions = list(map(lambda version: version["version"], get_avaliable_versions(package)))
-			latest_version = sort_versions(versions)[-1:][0]
-			dependencies[package] = "^"+latest_version
+			print("package "+package+" is already a dependency")
+			return
+		latest_version = install_latest(package)
+		if not latest_version:
+			return
+		package_json_if_save(save, "^"+latest_version)
+
+def command_remove(package, save):
+	def package_json_if_save(save):
+		if save:
+			dependencies = get_dependencies()
+			dependencies.pop(package, None)
 			write_dependencies(dependencies)
-			install(package, latest_version)
+	import shutil
+	metadata = get_package("python_modules", package)
+	if not metadata:
+		print("package "+package+" is not installed")
+		package_json_if_save(save)
+		return
+	pending_removals = []
+	pending_removals += metadata["top_level"]
+	pending_removals.append(metadata["dist_info"])
+	for pending_removal in pending_removals:
+		try:
+			shutil.rmtree(os.path.join("python_modules", pending_removal))
+		except:
+			try:
+				os.remove(os.path.join("python_modules", pending_removal+".py"))
+			except:
+				pass
+	package_json_if_save(save)
 
 def main():
 	parser = argparse.ArgumentParser(description=("Python Package Manager"))
@@ -117,13 +166,20 @@ def main():
 
 	parser_install = subparsers.add_parser('install')
 	parser_install.add_argument('program', type=str, nargs='?')
+	parser_install.add_argument("-s", "--save", action='store_true')
+
+	parser_remove = subparsers.add_parser('remove')
+	parser_remove.add_argument('program', type=str)
+	parser_remove.add_argument("-s", "--save", action='store_true')
 
 	args = parser.parse_args()
 
 	if args.subcommand == "outdated":
 		command_outdated()
 	elif args.subcommand == "install":
-		command_install(args.program)
+		command_install(args.program, args.save)
+	elif args.subcommand == "remove":
+		command_remove(args.program, args.save)
 	else:
 		print("Unrecognized command. Use --help")
 

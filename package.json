@@ -1,7 +1,8 @@
 {
+  "pythonDevDependencies": {},
   "pythonDependencies": {
     "django": "^1.9.4",
-    "djangorestframework": "^3.3.3"
-  },
-  "pythonDevDependencies": {}
+    "djangorestframework": "^3.3.3",
+    "semver": "^2.4.1"
+  }
 }
