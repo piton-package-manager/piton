@@ -78,22 +78,28 @@ def get_package_metadata(packages, name):
 		lookup[0]["installed"] = True
 		return lookup[0]
 
-def command_outdated():
-	packages = get_packages("python_modules")
-	dependencies = get_dependencies()
-	package_metadatas = []
+class command_outdated():
+	name = "outdated"
+	def decorate_subparser(self, subparser):
+		pass
+	def run(self, args):
+		self._run()
+	def _run(self):
+		packages = get_packages("python_modules")
+		dependencies = get_dependencies()
+		package_metadatas = []
 
-	for dependency, version in dependencies.items():
-		package_metadata = get_package_metadata(packages, dependency)
-		package_metadata["version_markup"] = version
-		versions_metadata = get_avaliable_versions(dependency)
-		# package_metadata["avaliable_versions_metadata"] = versions_metadata
-		package_metadata["avaliable_versions"] = list(map(lambda version: version["version"], versions_metadata))
-		package_metadata["latest"] = sort_versions(package_metadata["avaliable_versions"])[-1:][0]
-		package_metadata["wanted_version"] = wanted_version(version, package_metadata["avaliable_versions"])
-		package_metadatas.append(package_metadata)
+		for dependency, version in dependencies.items():
+			package_metadata = get_package_metadata(packages, dependency)
+			package_metadata["version_markup"] = version
+			versions_metadata = get_avaliable_versions(dependency)
+			# package_metadata["avaliable_versions_metadata"] = versions_metadata
+			package_metadata["avaliable_versions"] = list(map(lambda version: version["version"], versions_metadata))
+			package_metadata["latest"] = sort_versions(package_metadata["avaliable_versions"])[-1:][0]
+			package_metadata["wanted_version"] = wanted_version(version, package_metadata["avaliable_versions"])
+			package_metadatas.append(package_metadata)
 
-	display_outdated(package_metadatas)
+		display_outdated(package_metadatas)
 
 def perform_install(package, version=None):
 	sneak_config.sneak_config_setup()
@@ -115,73 +121,82 @@ def install_latest(package):
 	perform_install(package, latest_version)
 	return latest_version
 
-def command_install(package, save):
-	def package_json_if_save(save, version_markup):
-		if save:
-			dependencies = get_dependencies()
-			dependencies[package] = version_markup
-			write_dependencies(dependencies)
-	if not package:
-		print(get_dependencies())
-	else:
-		dependencies = get_dependencies()
-		if package in dependencies:
-			print("package "+package+" is already a dependency")
+class command_remove():
+	name = "remove"
+	def decorate_subparser(self, subparser):
+		subparser.add_argument('program', type=str, nargs='?')
+		subparser.add_argument("-s", "--save", action='store_true')
+	def run(self, args):
+		self._run(args.program, args.save)
+	def _run(self, package, save):
+		def package_json_if_save(save):
+			if save:
+				dependencies = get_dependencies()
+				dependencies.pop(package, None)
+				write_dependencies(dependencies)
+		import shutil
+		metadata = get_package("python_modules", package)
+		if not metadata:
+			print("package "+package+" is not installed")
+			package_json_if_save(save)
 			return
-		latest_version = install_latest(package)
-		if not latest_version:
-			return
-		package_json_if_save(save, "^"+latest_version)
-
-def command_remove(package, save):
-	def package_json_if_save(save):
-		if save:
-			dependencies = get_dependencies()
-			dependencies.pop(package, None)
-			write_dependencies(dependencies)
-	import shutil
-	metadata = get_package("python_modules", package)
-	if not metadata:
-		print("package "+package+" is not installed")
-		package_json_if_save(save)
-		return
-	pending_removals = []
-	pending_removals += metadata["top_level"]
-	pending_removals.append(metadata["dist_info"])
-	for pending_removal in pending_removals:
-		try:
-			shutil.rmtree(os.path.join("python_modules", pending_removal))
-		except:
+		pending_removals = []
+		pending_removals += metadata["top_level"]
+		pending_removals.append(metadata["dist_info"])
+		for pending_removal in pending_removals:
 			try:
-				os.remove(os.path.join("python_modules", pending_removal+".py"))
+				shutil.rmtree(os.path.join("python_modules", pending_removal))
 			except:
-				pass
-	package_json_if_save(save)
+				try:
+					os.remove(os.path.join("python_modules", pending_removal+".py"))
+				except:
+					pass
+		package_json_if_save(save)
+
+class command_install():
+	name = "install"
+	def decorate_subparser(self, subparser):
+		subparser.add_argument('program', type=str, nargs='?')
+		subparser.add_argument("-s", "--save", action='store_true')
+	def run(self, args):
+		self._run(args.program, args.save)
+	def _run(self, package, save):
+		def package_json_if_save(save, version_markup):
+			if save:
+				dependencies = get_dependencies()
+				dependencies[package] = version_markup
+				write_dependencies(dependencies)
+		if not package:
+			print(get_dependencies())
+		else:
+			dependencies = get_dependencies()
+			if package in dependencies:
+				print("package "+package+" is already a dependency")
+				return
+			latest_version = install_latest(package)
+			if not latest_version:
+				return
+			package_json_if_save(save, "^"+latest_version)
 
 def main():
+	subcommands = [
+		command_outdated(),
+		command_install(),
+		command_remove()
+	]
+
 	parser = argparse.ArgumentParser(description=("Python Package Manager"))
 	subparsers = parser.add_subparsers(dest='subcommand')
 
-	parser_outdated = subparsers.add_parser('outdated')
-
-	parser_install = subparsers.add_parser('install')
-	parser_install.add_argument('program', type=str, nargs='?')
-	parser_install.add_argument("-s", "--save", action='store_true')
-
-	parser_remove = subparsers.add_parser('remove')
-	parser_remove.add_argument('program', type=str)
-	parser_remove.add_argument("-s", "--save", action='store_true')
+	for subcommand in subcommands:
+		subparser = subparsers.add_parser(subcommand.name)
+		subcommand.decorate_subparser(subparser)
 
 	args = parser.parse_args()
 
-	if args.subcommand == "outdated":
-		command_outdated()
-	elif args.subcommand == "install":
-		command_install(args.program, args.save)
-	elif args.subcommand == "remove":
-		command_remove(args.program, args.save)
-	else:
-		print("Unrecognized command. Use --help")
+	for subcommand in subcommands:
+		if args.subcommand == subcommand.name:
+			subcommand.run(args)
 
 if __name__ == '__main__':
 	sys.exit(main())
