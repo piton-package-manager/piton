@@ -8,6 +8,13 @@ from utils import sneak_config
 import pip
 
 def get_package_info(directory, package):
+	def interpret_dependencies(messy_requirements):
+		dependencies = []
+		for messy_requirement in messy_requirements:
+			for wtf in messy_requirement.get("requires", []):
+				wtf = wtf.split(" ")[0]
+				dependencies.append(wtf.lower())		
+		return dependencies
 	top_level_packs = []
 	with open(os.path.join(directory, package, "top_level.txt"),'r') as top_level:
 		for line in top_level:
@@ -15,10 +22,12 @@ def get_package_info(directory, package):
 	with open(os.path.join(directory, package, "metadata.json"),'r') as metadata_file:
 		metadata = json.load(metadata_file)
 		version = metadata.get("version", "")
-		name = metadata.get("name", "")
+		name = metadata.get("name", "").lower()
+		dependencies = interpret_dependencies(metadata.get("run_requires", []))
 	return {
 		"dist_info": package,
 		"top_level": top_level_packs,
+		"dependencies": dependencies,
 		"version": version,
 		"name": name
 	}
@@ -171,18 +180,33 @@ class command_install():
 		else:
 			dependencies = get_dependencies()
 			if package in dependencies:
-				print("package "+package+" is already a dependency")
-				return
+				print("warning: package "+package+" is already a dependency")
 			latest_version = install_latest(package)
 			if not latest_version:
 				return
 			package_json_if_save(save, "^"+latest_version)
 
+class command_list():
+	name = "list"
+	def decorate_subparser(self, subparser):
+		pass
+	def run(self, args):
+		self._run()
+	def _run(self):
+		print(os.getcwd())
+		installed_package_metadatas = get_packages("python_modules")
+		dependencies = get_dependencies()
+		for metadata in installed_package_metadatas:
+			if metadata["name"] in dependencies:
+				print(metadata["name"]+" is top level , has dependencies: ")
+				print(metadata["dependencies"])
+
 def main():
 	subcommands = [
 		command_outdated(),
 		command_install(),
-		command_remove()
+		command_remove(),
+		command_list()
 	]
 
 	parser = argparse.ArgumentParser(description=("Python Package Manager"))

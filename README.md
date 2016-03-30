@@ -47,7 +47,7 @@ This project is not complete
 | install       | working       |
 | remove        | working       |
 | update        | in-progress   |
-| list          | planned       |
+| list          | in-progress   |
 | prune         | planned       |
 
 ## PPM Limitations
