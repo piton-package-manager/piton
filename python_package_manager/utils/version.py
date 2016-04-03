@@ -1,8 +1,8 @@
-import utils.semver
+import python_package_manager.utils.semver
 import functools
 import re
 
-semver = utils.semver
+semver = python_package_manager.utils.semver
 
 def get_major_version(version):
 	return int(version.split(".")[0])
