@@ -2,11 +2,10 @@
 
 A python package manager modelled after npm, the ONE TRUE PACKAGE MANAGER.
 
+[![PyPI version](https://badge.fury.io/py/python_package_manager.svg)](https://badge.fury.io/py/python_package_manager)
 ![](https://img.shields.io/badge/type-shitpost-brightgreen.svg)
-![](https://img.shields.io/badge/maintained-yes-brightgreen.svg)
 ![](https://img.shields.io/packagist/l/doctrine/orm.svg)
 ![](https://img.shields.io/badge/python-3.4%2C%203.5-blue.svg)
-![](https://img.shields.io/badge/downloads-9000%2B%2Ftotal-green.svg)
 
 Let's face it, python package management is a failure. 
 
@@ -39,7 +38,7 @@ PPM is also a strong proponent for microlibraries. Reusing productive code like 
 
 ## Installation
 
-	pip install python-package-manager
+	pip install python_package_manager
 
 ## Use
 
