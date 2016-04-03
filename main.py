@@ -87,13 +87,16 @@ def get_package_metadata(packages, name):
 		lookup[0]["installed"] = True
 		return lookup[0]
 
-class command_outdated():
+class CommandOutdated():
 	name = "outdated"
-	def decorate_subparser(self, subparser):
+	@staticmethod
+	def decorate_subparser(subparser):
 		pass
-	def run(self, args):
-		self._run()
-	def _run(self):
+	@classmethod
+	def run(cls, args):
+		cls._run()
+	@staticmethod
+	def _run():
 		packages = get_packages("python_modules")
 		dependencies = get_dependencies()
 		package_metadatas = []
@@ -130,14 +133,17 @@ def install_latest(package):
 	perform_install(package, latest_version)
 	return latest_version
 
-class command_remove():
+class CommandRemove():
 	name = "remove"
-	def decorate_subparser(self, subparser):
+	@staticmethod
+	def decorate_subparser(subparser):
 		subparser.add_argument('program', type=str, nargs='?')
 		subparser.add_argument("-s", "--save", action='store_true')
-	def run(self, args):
-		self._run(args.program, args.save)
-	def _run(self, package, save):
+	@classmethod
+	def run(cls, args):
+		cls._run(args.program, args.save)
+	@staticmethod
+	def _run(package, save):
 		def package_json_if_save(save):
 			if save:
 				dependencies = get_dependencies()
@@ -161,15 +167,21 @@ class command_remove():
 				except:
 					pass
 		package_json_if_save(save)
+	def execute(package):
+		# Code interface
+		CommandRemove._run(package, False)
 
-class command_install():
+class CommandInstall():
 	name = "install"
-	def decorate_subparser(self, subparser):
+	@staticmethod
+	def decorate_subparser(subparser):
 		subparser.add_argument('program', type=str, nargs='?')
 		subparser.add_argument("-s", "--save", action='store_true')
-	def run(self, args):
-		self._run(args.program, args.save)
-	def _run(self, package, save):
+	@classmethod
+	def run(cls, args):
+		cls._run(args.program, args.save)
+	@staticmethod
+	def _run(package, save):
 		def package_json_if_save(save, version_markup):
 			if save:
 				dependencies = get_dependencies()
@@ -186,27 +198,100 @@ class command_install():
 				return
 			package_json_if_save(save, "^"+latest_version)
 
-class command_list():
+class Node():
+	# Use fields: metadata, children
+	def __init__(self, metadata = None):
+		self.metadata = metadata
+		self.children = []
+	def build_tree_level(self, installed_package_metadatas):
+		if self.metadata:
+			for dependency in self.metadata["dependencies"]:
+				for scanning_installed in installed_package_metadatas:
+					if scanning_installed["name"] == dependency:
+						new_node = Node(scanning_installed)
+						self.children.append(new_node)
+						scanning_installed["touched"] = True
+						new_node.build_tree_level(installed_package_metadatas)
+	def __repr__(self, level = 0):
+		return_string = ""
+		if level != 0:
+			if len(self.children) == 0:
+				return_string += "─"
+			else:
+				return_string += "┬"
+		if self.metadata:
+			return_string += self.metadata["name"]+"\n"
+		for i, child in enumerate(self.children):
+			return_string += "│ "*level
+			if i == len(self.children)-1:
+				return_string += "└─"
+			else:
+				return_string += "├─"
+			return_string += child.__repr__(level+1)
+		return return_string
+
+class CommandList():
 	name = "list"
-	def decorate_subparser(self, subparser):
+	@staticmethod
+	def decorate_subparser(subparser):
 		pass
-	def run(self, args):
-		self._run()
-	def _run(self):
+	@classmethod
+	def run(cls, args):
+		cls._run()
+	@staticmethod
+	def _run():
 		print(os.getcwd())
 		installed_package_metadatas = get_packages("python_modules")
 		dependencies = get_dependencies()
+		tree = Node()
+		unwanted = []
 		for metadata in installed_package_metadatas:
 			if metadata["name"] in dependencies:
-				print(metadata["name"]+" is top level , has dependencies: ")
-				print(metadata["dependencies"])
+				tree.children.append(Node(metadata))
+				metadata["touched"] = True
+		for node in tree.children:
+			node.build_tree_level(installed_package_metadatas)
+		for metadata in installed_package_metadatas:
+			if metadata.get("touched", False) == False:
+				unwanted.append(metadata)
+		print(tree)
+		if len(unwanted) > 0:
+			print("Unwanted:")
+			print(list(map(lambda a: a["name"], unwanted)))
+
+class CommandPrune():
+	name = "prune"
+	@staticmethod
+	def decorate_subparser(subparser):
+		pass
+	@classmethod
+	def run(cls, args):
+		cls._run()
+	@staticmethod
+	def _run():
+		installed_package_metadatas = get_packages("python_modules")
+		dependencies = get_dependencies()
+		tree = Node()
+		unwanted = []
+		for metadata in installed_package_metadatas:
+			if metadata["name"] in dependencies:
+				tree.children.append(Node(metadata))
+				metadata["touched"] = True
+		for node in tree.children:
+			node.build_tree_level(installed_package_metadatas)
+		for metadata in installed_package_metadatas:
+			if metadata.get("touched", False) == False:
+				unwanted.append(metadata)
+		for metadata in unwanted:
+			CommandRemove.execute(metadata["name"])
 
 def main():
 	subcommands = [
-		command_outdated(),
-		command_install(),
-		command_remove(),
-		command_list()
+		CommandOutdated,
+		CommandInstall,
+		CommandRemove,
+		CommandList,
+		CommandPrune
 	]
 
 	parser = argparse.ArgumentParser(description=("Python Package Manager"))

@@ -44,11 +44,11 @@ This project is not complete
 | Command       | Status        |
 | ------------- |:-------------:|
 | outdated      | working       |
-| install       | working       |
+| install       | working (bugs)|
 | remove        | working       |
 | update        | in-progress   |
-| list          | in-progress   |
-| prune         | planned       |
+| list          | working       |
+| prune         | working       |
 
 ## PPM Limitations
 
