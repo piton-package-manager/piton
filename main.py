@@ -4,7 +4,7 @@ import sys
 import argparse
 from utils.pypi_api import get_avaliable_versions
 from utils.version import wanted_version, sort_versions
-from utils import sneak_config
+from utils import sneak_config, package_json
 import pip
 
 def get_package_info(directory, package):
@@ -46,20 +46,6 @@ def get_package(directory, package):
 		return None
 	return possible_package[-1:][0]
 
-def get_dependencies():
-	with open(os.path.join('package.json'), 'r') as infile:
-		package_dict = json.load(infile)
-		dependencies = package_dict.get("pythonDependencies", [])
-		dependencies_dev = package_dict.get("pythonDevDependencies", [])
-	return dependencies
-
-def write_dependencies(dependencies):
-	with open(os.path.join('package.json'), 'r') as infile:
-		package_dict = json.load(infile)
-		package_dict["pythonDependencies"] = dependencies
-	with open(os.path.join('package.json'), 'w') as outfile:
-		json.dump(package_dict, outfile, indent=2)
-
 def display_outdated(metadatas):
 	headings = ["current", "wanted", "latest"]
 	packages_list = list(map(lambda metadata: metadata["name"], metadatas))
@@ -98,7 +84,7 @@ class CommandOutdated():
 	@staticmethod
 	def _run():
 		packages = get_packages("python_modules")
-		dependencies = get_dependencies()
+		dependencies = package_json.get_dependencies()
 		package_metadatas = []
 
 		for dependency, version in dependencies.items():
@@ -113,26 +99,6 @@ class CommandOutdated():
 
 		display_outdated(package_metadatas)
 
-def perform_install(package, version=None):
-	sneak_config.sneak_config_setup()
-	if version:
-		install_item = package+"=="+version
-	else:
-		install_item = package
-	print(install_item)
-	pip.main(['install', install_item, "--target=python_modules"])
-	sneak_config.sneak_config_remove()
-
-def install_latest(package):
-	avaliable_versions = get_avaliable_versions(package)
-	if avaliable_versions == None:
-		print("Unable to find package "+package)
-		return None
-	versions = list(map(lambda version: version["version"], avaliable_versions))
-	latest_version = sort_versions(versions)[-1:][0]
-	perform_install(package, latest_version)
-	return latest_version
-
 class CommandRemove():
 	name = "remove"
 	@staticmethod
@@ -146,9 +112,9 @@ class CommandRemove():
 	def _run(package, save):
 		def package_json_if_save(save):
 			if save:
-				dependencies = get_dependencies()
+				dependencies = package_json.get_dependencies()
 				dependencies.pop(package, None)
-				write_dependencies(dependencies)
+				package_json.write_dependencies(dependencies)
 		import shutil
 		metadata = get_package("python_modules", package)
 		if not metadata:
@@ -167,9 +133,10 @@ class CommandRemove():
 				except:
 					pass
 		package_json_if_save(save)
-	def execute(package):
+	@classmethod
+	def execute(cls, package):
 		# Code interface
-		CommandRemove._run(package, False)
+		cls._run(package, False)
 
 class CommandInstall():
 	name = "install"
@@ -180,23 +147,56 @@ class CommandInstall():
 	@classmethod
 	def run(cls, args):
 		cls._run(args.program, args.save)
-	@staticmethod
-	def _run(package, save):
+	@classmethod
+	def _run(cls, package, save):
 		def package_json_if_save(save, version_markup):
 			if save:
-				dependencies = get_dependencies()
+				dependencies = package_json.get_dependencies()
 				dependencies[package] = version_markup
-				write_dependencies(dependencies)
+				package_json.write_dependencies(dependencies)
 		if not package:
-			print(get_dependencies())
+			installed_package_metadatas = get_packages("python_modules")
+			installed_package_names = list(map(lambda md: md["name"], installed_package_metadatas))
+			dependencies = package_json.get_dependencies()
+			install_queue = []
+			for dependency in dependencies:
+				if not dependency in installed_package_names:
+					install_queue.append({
+						"name": dependency,
+						"version": dependencies[dependency]
+					})
+			for item in install_queue:
+				versions = list(map(lambda md: md["version"], get_avaliable_versions(item["name"])))
+				wanted = wanted_version(item["version"], versions)
+				cls.perform_install(item["name"], wanted)
 		else:
-			dependencies = get_dependencies()
+			dependencies = package_json.get_dependencies()
 			if package in dependencies:
 				print("warning: package "+package+" is already a dependency")
-			latest_version = install_latest(package)
+			latest_version = cls.install_latest(package)
 			if not latest_version:
 				return
 			package_json_if_save(save, "^"+latest_version)
+	@staticmethod
+	def perform_install(package, version=None):
+		sneak_config.sneak_config_setup()
+		if version:
+			install_item = package+"=="+version
+		else:
+			install_item = package
+		print(install_item)
+		pip.main(['install', install_item, "--target=python_modules"])
+		sneak_config.sneak_config_remove()
+	@classmethod
+	def install_latest(cls, package):
+		avaliable_versions = get_avaliable_versions(package)
+		if avaliable_versions == None:
+			print("Unable to find package "+package)
+			return None
+		versions = list(map(lambda version: version["version"], avaliable_versions))
+		latest_version = sort_versions(versions)[-1:][0]
+		cls.perform_install(package, latest_version)
+		return latest_version
 
 class Node():
 	# Use fields: metadata, children
@@ -220,7 +220,7 @@ class Node():
 			else:
 				return_string += "┬"
 		if self.metadata:
-			return_string += self.metadata["name"]+"\n"
+			return_string += self.metadata["name"]+"@"+self.metadata["version"]+"\n"
 		for i, child in enumerate(self.children):
 			return_string += "│ "*level
 			if i == len(self.children)-1:
@@ -242,7 +242,7 @@ class CommandList():
 	def _run():
 		print(os.getcwd())
 		installed_package_metadatas = get_packages("python_modules")
-		dependencies = get_dependencies()
+		dependencies = package_json.get_dependencies()
 		tree = Node()
 		unwanted = []
 		for metadata in installed_package_metadatas:
@@ -270,7 +270,7 @@ class CommandPrune():
 	@staticmethod
 	def _run():
 		installed_package_metadatas = get_packages("python_modules")
-		dependencies = get_dependencies()
+		dependencies = package_json.get_dependencies()
 		tree = Node()
 		unwanted = []
 		for metadata in installed_package_metadatas:
@@ -285,13 +285,35 @@ class CommandPrune():
 		for metadata in unwanted:
 			CommandRemove.execute(metadata["name"])
 
+class CommandInit():
+	name = "init"
+	@staticmethod
+	def decorate_subparser(subparser):
+		pass
+	@classmethod
+	def run(cls, args):
+		cls._run()
+	@staticmethod
+	def _run():
+		package_file_path = os.path.join(os.getcwd(), 'package.json')
+		if os.path.isfile(package_file_path):
+			print("package.json already exists")
+			return
+		with open(package_file_path, 'w') as outfile:
+			file_content = {
+				"pythonDevDependencies": {},
+				"pythonDependencies": {}
+			}
+			json.dump(file_content, outfile, indent=2)
+
 def main():
 	subcommands = [
 		CommandOutdated,
 		CommandInstall,
 		CommandRemove,
 		CommandList,
-		CommandPrune
+		CommandPrune,
+		CommandInit
 	]
 
 	parser = argparse.ArgumentParser(description=("Python Package Manager"))
