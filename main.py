@@ -46,22 +46,6 @@ def get_package(directory, package):
 		return None
 	return possible_package[-1:][0]
 
-def display_outdated(metadatas):
-	headings = ["current", "wanted", "latest"]
-	packages_list = list(map(lambda metadata: metadata["name"], metadatas))
-	data = []
-	for metadata in metadatas:
-		if "version" in metadata:
-			current_version = metadata["version"]
-		else:
-			current_version = "n/a"
-		data.append([current_version, metadata["wanted_version"], metadata["latest"]])
-
-	row_format ="{:>15}" * (len(headings) + 1)
-	print(row_format.format("", *headings))
-	for package, row in zip(packages_list, data):
-		print(row_format.format(package, *row))
-
 def get_package_metadata(packages, name):
 	lookup = list(filter(lambda package: package["name"]==name, packages))
 	if len(lookup) == 0:
@@ -81,8 +65,8 @@ class CommandOutdated():
 	@classmethod
 	def run(cls, args):
 		cls._run()
-	@staticmethod
-	def _run():
+	@classmethod
+	def _run(cls):
 		packages = get_packages("python_modules")
 		dependencies = package_json.get_dependencies()
 		package_metadatas = []
@@ -97,7 +81,23 @@ class CommandOutdated():
 			package_metadata["wanted_version"] = wanted_version(version, package_metadata["avaliable_versions"])
 			package_metadatas.append(package_metadata)
 
-		display_outdated(package_metadatas)
+		cls.display_outdated(package_metadatas)
+	@staticmethod
+	def display_outdated(metadatas):
+		headings = ["current", "wanted", "latest"]
+		packages_list = list(map(lambda metadata: metadata["name"], metadatas))
+		data = []
+		for metadata in metadatas:
+			if "version" in metadata:
+				current_version = metadata["version"]
+			else:
+				current_version = "n/a"
+			data.append([current_version, metadata["wanted_version"], metadata["latest"]])
+
+		row_format ="{:>15}" * (len(headings) + 1)
+		print(row_format.format("", *headings))
+		for package, row in zip(packages_list, data):
+			print(row_format.format(package, *row))
 
 class CommandRemove():
 	name = "remove"
