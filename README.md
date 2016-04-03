@@ -17,6 +17,8 @@ Let's face it, python package management is a failure.
 
 PPM will fix this by doing the following:
 
+- Install packages locally at `python_modules` folder
+
 - Track dependencies in `package.json` the with NodeJS-like semantic versioning
 
 		{
@@ -37,12 +39,40 @@ PPM is also a strong proponent for microlibraries. Reusing productive code like 
 
 ## Installation
 
-This project is not complete
+	pip install python-package-manager
+
+## Use
+
+	ppm <command>
+
+## Typical use case
+
+	ppm init //creates a package.json
+	ppm install django --save
+	ppm install django-debug-toolbar --save
+
+IMPORTANT: ADD python_modules as a python path
+
+- Method 1:
+
+	Add `.python_modules` to `PYTHONPATH` in `.bash_profile`
+
+- Method 2 (more explicit):
+
+	Use the following code at each application entry point:
+
+		def setup_path():
+			import sys
+			import os
+			BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) #OR where the python_modules folder is at
+			sys.path.append(os.path.join(BASE_DIR, "python_modules"))
+		setup_path()
 
 ## Features
 
 | Command       | Status        |
 | ------------- |:-------------:|
+| init          | working       |
 | outdated      | working       |
 | install       | working       |
 | remove        | working       |
