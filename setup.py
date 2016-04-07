@@ -3,7 +3,7 @@ setup(
 	name = 'python_package_manager',
 	license='LICENSE',
 	packages = ['python_package_manager', 'python_package_manager/utils'], # this must be the same as the name above
-	version = '0.0.1',
+	version = '0.0.2',
 	description = 'A local python package manager',
 	author = 'Looklikeapro',
 	url = 'https://github.com/lookLikeAPro/ppm', # use the URL to the github repo

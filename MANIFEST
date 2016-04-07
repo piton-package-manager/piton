@@ -3,6 +3,7 @@ setup.cfg
 setup.py
 python_package_manager/__init__.py
 python_package_manager/main.py
+python_package_manager/node.py
 python_package_manager/utils/__init__.py
 python_package_manager/utils/package_json.py
 python_package_manager/utils/pypi_api.py
