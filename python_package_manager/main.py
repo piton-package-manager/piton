@@ -7,6 +7,7 @@ from .utils.version import wanted_version, sort_versions
 from .utils import sneak_config, package_json
 import pip
 from .node import Node
+from .utils.tabulate import tabulate
 
 def get_package_info(directory, package):
 	def interpret_dependencies(messy_requirements):
@@ -81,24 +82,38 @@ class CommandOutdated():
 			package_metadata["avaliable_versions"] = list(map(lambda version: version["version"], versions_metadata))
 			package_metadata["latest"] = sort_versions(package_metadata["avaliable_versions"])[-1:][0]
 			package_metadata["wanted_version"] = wanted_version(version, package_metadata["avaliable_versions"])
-			package_metadatas.append(package_metadata)
+			if not "version" in package_metadata or (
+				package_metadata["version"] != package_metadata["latest"] or
+				package_metadata["version"] != package_metadata["wanted_version"]):
+				package_metadatas.append(package_metadata)
 		cls.display_outdated(package_metadatas)
 	@staticmethod
 	def display_outdated(metadatas):
-		headings = ["current", "wanted", "latest"]
-		packages_list = list(map(lambda metadata: metadata["name"], metadatas))
-		data = []
+		class Colors:
+			PURPLE = '\033[95m'
+			OKBLUE = '\033[94m'
+			OKGREEN = '\033[92m'
+			WARNING = '\033[93m'
+			FAIL = '\033[91m'
+			UNDERLINE = '\033[4m'
+			ENDC = '\033[0m'
+
+		headings = ["Package", "current", "wanted", "latest"]
+		headings = list(map(lambda heading: Colors.UNDERLINE+heading+Colors.ENDC, headings))
+		table = []
+		metadatas = sorted(metadatas, key=lambda metadata: metadata["name"])
 		for metadata in metadatas:
 			if "version" in metadata:
 				current_version = metadata["version"]
 			else:
 				current_version = "n/a"
-			data.append([current_version, metadata["wanted_version"], metadata["latest"]])
-
-		row_format ="{:>15}" * (len(headings) + 1)
-		print(row_format.format("", *headings))
-		for package, row in zip(packages_list, data):
-			print(row_format.format(package, *row))
+			table.append([
+				Colors.OKGREEN+metadata["name"]+Colors.ENDC,
+				current_version,
+				Colors.OKGREEN+metadata["wanted_version"]+Colors.ENDC,
+				Colors.PURPLE+metadata["latest"]+Colors.ENDC
+			])
+		print(tabulate(table, headings, tablefmt="plain"))
 
 class CommandRemove():
 	name = "remove"
