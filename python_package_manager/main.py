@@ -70,7 +70,6 @@ class CommandOutdated():
 		packages = get_packages(os.path.join(os.getcwd(), "python_modules"))
 		dependencies = package_json.get_dependencies()
 		package_metadatas = []
-
 		for dependency, version in dependencies.items():
 			package_metadata = get_package_metadata(packages, dependency)
 			package_metadata["version_markup"] = version
@@ -80,7 +79,6 @@ class CommandOutdated():
 			package_metadata["latest"] = sort_versions(package_metadata["avaliable_versions"])[-1:][0]
 			package_metadata["wanted_version"] = wanted_version(version, package_metadata["avaliable_versions"])
 			package_metadatas.append(package_metadata)
-
 		cls.display_outdated(package_metadatas)
 	@staticmethod
 	def display_outdated(metadatas):
@@ -170,22 +168,22 @@ class CommandInstall():
 				wanted = wanted_version(item["version"], versions)
 				cls.perform_install(item["name"], wanted)
 		else:
-			dependencies = package_json.get_dependencies()
-			if package in dependencies:
-				print("warning: package "+package+" is already a dependency")
 			latest_version = cls.install_latest(package)
 			if not latest_version:
 				return
 			package_json_if_save(save, "^"+latest_version)
 	@staticmethod
-	def perform_install(package, version=None):
+	def perform_install(package, version=None, upgrade=False):
 		sneak_config.sneak_config_setup()
 		if version:
 			install_item = package+"=="+version
 		else:
 			install_item = package
 		print(install_item)
-		pip.main(['install', install_item, "--target="+os.path.join(os.getcwd(), "python_modules")])
+		command = ['install', install_item, "--target="+os.path.join(os.getcwd(), "python_modules")]
+		if upgrade:
+			command.append("--upgrade")
+		pip.main(command)
 		sneak_config.sneak_config_remove()
 	@classmethod
 	def install_latest(cls, package):
@@ -195,7 +193,7 @@ class CommandInstall():
 			return None
 		versions = list(map(lambda version: version["version"], avaliable_versions))
 		latest_version = sort_versions(versions)[-1:][0]
-		cls.perform_install(package, latest_version)
+		cls.perform_install(package, latest_version, true)
 		return latest_version
 
 class Node():
