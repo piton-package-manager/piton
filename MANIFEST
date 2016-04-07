@@ -7,6 +7,6 @@ python_package_manager/node.py
 python_package_manager/utils/__init__.py
 python_package_manager/utils/package_json.py
 python_package_manager/utils/pypi_api.py
-python_package_manager/utils/semver.py
 python_package_manager/utils/sneak_config.py
+python_package_manager/utils/tabulate.py
 python_package_manager/utils/version.py
