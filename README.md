@@ -20,6 +20,10 @@ Piton is a python package manager modelled after NPM. Piton makes it easier for 
 
 - Simplify unreasonably verbose pip commands such as `install --upgrade <package> >> requirements.txt` and `list --outdated` to more human friendly npm-like commands. `update`, `outdated`, `install --save`, etc
 
+## Future Plans
+
+Our plans are implement all the features mentioned in the [docs](https://github.com/piton-package-manager/docs) repo.
+
 ## Installation
 ```
 pip install piton
@@ -54,7 +58,7 @@ piton install django-debug-toolbar --save
 			sys.path.append(os.path.join(BASE_DIR, "python_modules"))
 		setup_path()
 
-## Features
+## Progress
 
 | Command       | Status        |
 | ------------- |:-------------:|
