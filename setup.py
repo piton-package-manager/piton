@@ -1,12 +1,11 @@
 from distutils.core import setup
 setup(
-	name = 'python_package_manager',
+	name = 'piton',
 	license='LICENSE',
-	packages = ['python_package_manager', 'python_package_manager/utils'], # this must be the same as the name above
-	version = '0.0.3',
+	packages = ['piton', 'piton/utils'], # this must be the same as the name above
+	version = '0.1.0',
 	description = 'A local python package manager',
-	author = 'Looklikeapro',
-	url = 'https://github.com/lookLikeAPro/ppm', # use the URL to the github repo
+	url = 'https://github.com/piton-package-manager/piton', # use the URL to the github repo
 	keywords = ['package', 'manager', 'local'], # arbitrary keywords
 	classifiers = [
 		'Programming Language :: Python :: 3.4',
@@ -14,7 +13,7 @@ setup(
 	],
 	entry_points = {
 		'console_scripts': [
-			'ppm = python_package_manager.main:main'
+			'piton = piton.main:main'
 		]
 	}
 )

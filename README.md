@@ -1,8 +1,8 @@
-#Python Package Manager
+# piton
 
 A python package manager modelled after npm, the ONE TRUE PACKAGE MANAGER.
 
-[![PyPI version](https://badge.fury.io/py/python_package_manager.svg)](https://badge.fury.io/py/python_package_manager)
+[![PyPI version](https://badge.fury.io/py/piton.svg)](https://badge.fury.io/py/piton)
 ![](https://img.shields.io/badge/type-shitpost-brightgreen.svg)
 ![](https://img.shields.io/packagist/l/doctrine/orm.svg)
 ![](https://img.shields.io/badge/python-3.4%2C%203.5-blue.svg)
@@ -14,7 +14,7 @@ Let's face it, python package management is a failure.
 - Keeping track of requirements.txt is impossible
 - No nested dependencies.
 
-PPM will fix this by doing the following:
+Piton will fix this by doing the following:
 
 - Install packages locally at `python_modules` folder
 
@@ -34,7 +34,7 @@ PPM will fix this by doing the following:
 
 - Simplify unreasonably verbose pip commands such as `install --upgrade <package> >> requirements.txt` and `list --outdated` to more human friendly npm-like commands. `update`, `outdated`, `install --save`, etc
 
-PPM is also a strong proponent for microlibraries. Reusing productive code like what the Node community has done with Left-Pad is what python needs to move forward in the webscale era.
+Piton is also a strong proponent for microlibraries. Reusing productive code like what the Node community has done with Left-Pad is what python needs to move forward in the webscale era.
 
 ## Installation
 
@@ -42,13 +42,13 @@ PPM is also a strong proponent for microlibraries. Reusing productive code like 
 
 ## Use
 
-	ppm <command>
+	piton <command>
 
 ## Typical use case
 
-	ppm init //creates a package.json
-	ppm install django --save
-	ppm install django-debug-toolbar --save
+	piton init //creates a package.json
+	piton install django --save
+	piton install django-debug-toolbar --save
 
 IMPORTANT: ADD python_modules as a python path
 
@@ -79,6 +79,6 @@ IMPORTANT: ADD python_modules as a python path
 | list          | working       |
 | prune         | working       |
 
-## PPM Limitations
+## Piton Limitations
 
-PPM is all about making package management local. It is not meant to be a repalcement for setuptools or pip. PPM continues to use pip, setuptools, and PYPI in the background.
+Piton is all about making package management local. It is not meant to be a repalcement for setuptools or pip. Piton continues to use pip, setuptools, and PYPI in the background.
