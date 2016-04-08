@@ -1,3 +1,3 @@
-from python_package_manager.main import main
+from piton.main import main
 
 main()

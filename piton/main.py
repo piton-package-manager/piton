@@ -209,9 +209,12 @@ class CommandInstall():
 		if avaliable_versions == None:
 			print("Unable to find package "+package)
 			return None
+		if len(avaliable_versions) == 0:
+			print("Unable to find releases for package "+package)
+			return None
 		versions = list(map(lambda version: version["version"], avaliable_versions))
 		latest_version = sort_versions(versions)[-1:][0]
-		cls.perform_install(package, latest_version, true)
+		cls.perform_install(package, latest_version, True)
 		return latest_version
 
 class CommandList():
