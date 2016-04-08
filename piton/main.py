@@ -4,60 +4,10 @@ import sys
 import argparse
 from .utils.pypi_api import get_avaliable_versions
 from .utils.version import wanted_version, sort_versions
-from .utils import sneak_config, package_json
+from .utils import sneak_config, package_json, python_modules
 import pip
 from .node import Node
 from .utils.tabulate import tabulate
-
-def get_package_info(directory, package):
-	def interpret_dependencies(messy_requirements):
-		dependencies = []
-		for messy_requirement in messy_requirements:
-			for wtf in messy_requirement.get("requires", []):
-				wtf = wtf.split(" ")[0]
-				dependencies.append(wtf.lower())		
-		return dependencies
-	top_level_packs = []
-	with open(os.path.join(directory, package, "top_level.txt"),'r') as top_level:
-		for line in top_level:
-			top_level_packs.append(line.strip())
-	with open(os.path.join(directory, package, "metadata.json"),'r') as metadata_file:
-		metadata = json.load(metadata_file)
-		version = metadata.get("version", "")
-		name = metadata.get("name", "").lower()
-		dependencies = interpret_dependencies(metadata.get("run_requires", []))
-	return {
-		"dist_info": package,
-		"top_level": top_level_packs,
-		"dependencies": dependencies,
-		"version": version,
-		"name": name
-	}
-
-def get_packages(directory):
-	packages = []
-	for dirname in os.listdir(directory):
-		if dirname[-10:] == ".dist-info" and os.path.isdir(os.path.join(directory, dirname)):
-			packages.append(get_package_info(directory, dirname))
-	return packages
-
-def get_package(directory, package):
-	packages = get_packages(os.path.join(os.getcwd(), "python_modules"))
-	possible_package = list(filter(lambda p: p["name"] == package, packages))
-	if len(possible_package) == 0:
-		return None
-	return possible_package[-1:][0]
-
-def get_package_metadata(packages, name):
-	lookup = list(filter(lambda package: package["name"]==name, packages))
-	if len(lookup) == 0:
-		return {
-			"name": name,
-			"installed": False
-		}
-	else:
-		lookup[0]["installed"] = True
-		return lookup[0]
 
 class CommandOutdated():
 	name = "outdated"
@@ -69,13 +19,13 @@ class CommandOutdated():
 		cls._run()
 	@classmethod
 	def _run(cls):
-		packages = get_packages(os.path.join(os.getcwd(), "python_modules"))
+		packages = python_modules.get_packages(os.path.join(os.getcwd(), "python_modules"))
 		dependencies = package_json.get_dependencies()
 		if len(dependencies) == 0:
 			return
 		package_metadatas = []
 		for dependency, version in dependencies.items():
-			package_metadata = get_package_metadata(packages, dependency)
+			package_metadata = python_modules.get_package_metadata(packages, dependency)
 			package_metadata["version_markup"] = version
 			versions_metadata = get_avaliable_versions(dependency)
 			# package_metadata["avaliable_versions_metadata"] = versions_metadata
@@ -132,7 +82,7 @@ class CommandRemove():
 				dependencies.pop(package, None)
 				package_json.write_dependencies(dependencies)
 		import shutil
-		metadata = get_package(os.path.join(os.getcwd(), "python_modules"), package)
+		metadata = python_modules.get_package(os.path.join(os.getcwd(), "python_modules"), package)
 		if not metadata:
 			print("package "+package+" is not installed")
 			package_json_if_save(save)
@@ -171,7 +121,7 @@ class CommandInstall():
 				dependencies[package] = version_markup
 				package_json.write_dependencies(dependencies)
 		if not package:
-			installed_package_metadatas = get_packages(os.path.join(os.getcwd(), "python_modules"))
+			installed_package_metadatas = python_modules.get_packages(os.path.join(os.getcwd(), "python_modules"))
 			installed_package_names = list(map(lambda md: md["name"], installed_package_metadatas))
 			dependencies = package_json.get_dependencies()
 			install_queue = []
@@ -228,7 +178,7 @@ class CommandList():
 	@staticmethod
 	def _run():
 		print(os.getcwd())
-		installed_package_metadatas = get_packages(os.path.join(os.getcwd(), "python_modules"))
+		installed_package_metadatas = python_modules.get_packages(os.path.join(os.getcwd(), "python_modules"))
 		dependencies = package_json.get_dependencies()
 		tree = Node()
 		unwanted = []
@@ -256,7 +206,7 @@ class CommandPrune():
 		cls._run()
 	@staticmethod
 	def _run():
-		installed_package_metadatas = get_packages(os.path.join(os.getcwd(), "python_modules"))
+		installed_package_metadatas = python_modules.get_packages(os.path.join(os.getcwd(), "python_modules"))
 		dependencies = package_json.get_dependencies()
 		tree = Node()
 		unwanted = []
