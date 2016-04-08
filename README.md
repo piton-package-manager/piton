@@ -1,20 +1,6 @@
 # piton
 
-A python package manager modelled after npm, the ONE TRUE PACKAGE MANAGER.
-
-[![PyPI version](https://badge.fury.io/py/piton.svg)](https://badge.fury.io/py/piton)
-![](https://img.shields.io/badge/type-shitpost-brightgreen.svg)
-![](https://img.shields.io/packagist/l/doctrine/orm.svg)
-![](https://img.shields.io/badge/python-3.4%2C%203.5-blue.svg)
-
-Let's face it, python package management is a failure. 
-
-- Support for project-specific packages is non-existent
-- Virtualenv is a disaster
-- Keeping track of requirements.txt is impossible
-- No nested dependencies.
-
-Piton will fix this by doing the following:
+Piton is a python package manager modelled after NPM. Piton makes it easier for Python developers to share and reuse code. Piton will do this by doing the following:
 
 - Install packages locally at `python_modules` folder
 
@@ -34,23 +20,24 @@ Piton will fix this by doing the following:
 
 - Simplify unreasonably verbose pip commands such as `install --upgrade <package> >> requirements.txt` and `list --outdated` to more human friendly npm-like commands. `update`, `outdated`, `install --save`, etc
 
-Piton is also a strong proponent for microlibraries. Reusing productive code like what the Node community has done with Left-Pad is what python needs to move forward in the webscale era.
-
 ## Installation
-
-	pip install python_package_manager
-
+```
+pip install piton
+```
 ## Use
-
-	piton <command>
+```
+piton <command>
+```
 
 ## Typical use case
 
-	piton init //creates a package.json
-	piton install django --save
-	piton install django-debug-toolbar --save
+```
+piton init //creates a package.json
+piton install django --save
+piton install django-debug-toolbar --save
+```
 
-IMPORTANT: ADD python_modules as a python path
+**IMPORTANT**: ADD python_modules as a python path
 
 - Method 1:
 
@@ -76,6 +63,8 @@ IMPORTANT: ADD python_modules as a python path
 | install       | working       |
 | remove        | working       |
 | update        | in-progress   |
+| bugs tracker  | in-progress   |
+| user scripts  | in-progress   |
 | list          | working       |
 | prune         | working       |
 
