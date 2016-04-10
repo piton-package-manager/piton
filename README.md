@@ -47,6 +47,8 @@ piton install django-debug-toolbar --save
 
 	Add `.python_modules` to `PYTHONPATH` in `.bash_profile`
 
+	Or use `piton path --save` to do it automatically.
+
 - Method 2 (more explicit):
 
 	Use the following code at each application entry point:
@@ -67,10 +69,11 @@ piton install django-debug-toolbar --save
 | install       | working       |
 | remove        | working       |
 | update        | in-progress   |
-| bugs tracker  | in-progress   |
+| bugs tracker  | planned       |
 | user scripts  | in-progress   |
 | list          | working       |
 | prune         | working       |
+| path          | working       |
 
 ## Piton Limitations
 

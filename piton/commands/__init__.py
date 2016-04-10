@@ -4,3 +4,4 @@ from .list import *
 from .remove import *
 from .install import *
 from .prune import *
+from .path import *
