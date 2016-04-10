@@ -28,9 +28,12 @@ def get_package_info(directory, package):
 
 def get_packages(directory):
 	packages = []
-	for dirname in os.listdir(directory):
-		if dirname[-10:] == ".dist-info" and os.path.isdir(os.path.join(directory, dirname)):
-			packages.append(get_package_info(directory, dirname))
+	try:
+		for dirname in os.listdir(directory):
+			if dirname[-10:] == ".dist-info" and os.path.isdir(os.path.join(directory, dirname)):
+				packages.append(get_package_info(directory, dirname))
+	except:
+		packages = []
 	return packages
 
 def get_package(directory, package):
