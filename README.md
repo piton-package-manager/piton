@@ -1,24 +1,31 @@
 # piton
 
-Piton is a python package manager modelled after NPM. Piton makes it easier for Python developers to share and reuse code. Piton will do this by doing the following:
+[![PyPI version](https://badge.fury.io/py/piton.svg)](https://badge.fury.io/py/piton)
+![](https://img.shields.io/badge/python-3.4%2C%203.5-blue.svg)
+
+Piton is a python package manager modelled after NPM. Piton makes it easier for Python developers to share and reuse code. It makes package management simple by doing the following:
 
 - Install packages locally at `python_modules` folder
 
-- Track dependencies in `package.json` the with NodeJS-like semantic versioning
+- Track dependencies in `package.json` with NodeJS-like semantic versioning
 
-		{
-			"pythonDependencies": {
-				"djangorestframework": "^3.3.3",
-				"django": "^1.9.1"
-			},
-			"pythonDevDependencies": {
-				"django-debug-toolbar": "1.0.0"
-			}
+	```
+	{
+		"pythonDependencies": {
+			"djangorestframework": "^3.3.3",
+			"django": "^1.9.1"
+		},
+		"pythonDevDependencies": {
+			"django-debug-toolbar": "1.0.0"
 		}
+	}
+	```
 
 - Automatic management of nested dependencies. Packages that are installed via nested dependency are removed automatically once packages requiring it are removed
 
 - Simplify unreasonably verbose pip commands such as `install --upgrade <package> >> requirements.txt` and `list --outdated` to more human friendly npm-like commands. `update`, `outdated`, `install --save`, etc
+
+[screenshots](/assets/screenshots)
 
 ## Future Plans
 
@@ -87,7 +94,7 @@ piton install django-debug-toolbar --save
 | outdated      | working       |
 | install       | working       |
 | remove        | working       |
-| update        | in-progress   |
+| update        | working       |
 | bugs tracker  | planned       |
 | run           | working       |
 | list          | working       |
