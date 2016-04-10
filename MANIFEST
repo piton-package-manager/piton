@@ -9,9 +9,13 @@ piton/commands/init.py
 piton/commands/install.py
 piton/commands/list.py
 piton/commands/outdated.py
+piton/commands/path.py
 piton/commands/prune.py
 piton/commands/remove.py
+piton/commands/run.py
+piton/commands/update.py
 piton/utils/__init__.py
+piton/utils/installer.py
 piton/utils/package_json.py
 piton/utils/pypi_api.py
 piton/utils/python_modules.py
