@@ -1,7 +1,7 @@
 import os
 import sys
 import argparse
-from .commands import CommandInit, CommandOutdated, CommandList, CommandRemove, CommandInstall, CommandPrune, CommandPath
+from .commands import CommandInit, CommandOutdated, CommandList, CommandRemove, CommandInstall, CommandPrune, CommandPath, CommandRun
 
 def main():
 	subcommands = [
@@ -12,6 +12,7 @@ def main():
 		CommandPrune,
 		CommandInit,
 		CommandPath,
+		CommandRun,
 	]
 
 	parser = argparse.ArgumentParser(description=("Python Package Manager"))

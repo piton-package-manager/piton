@@ -60,6 +60,25 @@ piton install django-debug-toolbar --save
 			sys.path.append(os.path.join(BASE_DIR, "python_modules"))
 		setup_path()
 
+- Method 3 (recommended):
+
+	Use piton as a task runner:
+
+	1. Define application entry points in `package.json` under `scripts`
+
+		```
+		{
+			"scripts": {
+				"develop": "python3 manage.py runserver"
+			},
+			"pythonDependencies": {
+				...
+			}
+		}
+		```
+
+	2. Run task with `piton run <task>`
+
 ## Progress
 
 | Command       | Status        |
@@ -70,7 +89,7 @@ piton install django-debug-toolbar --save
 | remove        | working       |
 | update        | in-progress   |
 | bugs tracker  | planned       |
-| user scripts  | in-progress   |
+| run           | working       |
 | list          | working       |
 | prune         | working       |
 | path          | working       |
