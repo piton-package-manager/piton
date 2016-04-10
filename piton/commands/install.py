@@ -13,10 +13,10 @@ class CommandInstall():
 		cls._run(args.program, args.save)
 	@classmethod
 	def _run(cls, package, save):
-		def package_json_if_save(save, version_markup):
+		def package_json_if_save(save, package_name, version_markup):
 			if save:
 				dependencies = package_json.get_dependencies()
-				dependencies[package] = version_markup
+				dependencies[package_name] = version_markup
 				package_json.write_dependencies(dependencies)
 		if not package:
 			cls.install_all()
@@ -26,12 +26,12 @@ class CommandInstall():
 			package_name = split[0]
 			package_version = split[1]
 			installer.install(package_name, package_version)
-			package_json_if_save(save, "^"+package_version)
+			package_json_if_save(save, package_name, "^"+package_version)
 		else:
 			latest_version = cls.install_latest(package)
 			if not latest_version:
 				return
-			package_json_if_save(save, "^"+latest_version)
+			package_json_if_save(save, package, "^"+latest_version)
 	@classmethod
 	def install_latest(cls, package):
 		avaliable_versions = pypi_api.get_avaliable_versions(package)

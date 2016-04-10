@@ -15,8 +15,6 @@ class CommandOutdated():
 	def _run(cls):
 		packages = python_modules.get_packages(os.path.join(os.getcwd(), "python_modules"))
 		dependencies = package_json.get_dependencies()
-		if len(dependencies) == 0:
-			return
 		package_metadatas = []
 		for dependency, version in dependencies.items():
 			package_metadata = python_modules.get_package_metadata(packages, dependency)
