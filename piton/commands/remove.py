@@ -1,5 +1,5 @@
 import os
-from ..utils import python_modules, package_json
+from ..utils import installer, package_json
 
 class CommandRemove():
 	name = "remove"
@@ -12,29 +12,13 @@ class CommandRemove():
 		cls._run(args.program, args.save)
 	@staticmethod
 	def _run(package, save):
-		def package_json_if_save(save):
-			if save:
-				dependencies = package_json.get_dependencies()
-				dependencies.pop(package, None)
-				package_json.write_dependencies(dependencies)
-		import shutil
-		metadata = python_modules.get_package(os.path.join(os.getcwd(), "python_modules"), package)
-		if not metadata:
+		removed = installer.remove(package)
+		if not removed:
 			print("package "+package+" is not installed")
-			package_json_if_save(save)
-			return
-		pending_removals = []
-		pending_removals += metadata["top_level"]
-		pending_removals.append(metadata["dist_info"])
-		for pending_removal in pending_removals:
-			try:
-				shutil.rmtree(os.path.join("python_modules", pending_removal))
-			except:
-				try:
-					os.remove(os.path.join("python_modules", pending_removal+".py"))
-				except:
-					pass
-		package_json_if_save(save)
+		if save:
+			dependencies = package_json.get_dependencies()
+			dependencies.pop(package, None)
+			package_json.write_dependencies(dependencies)
 	@classmethod
 	def execute(cls, package):
 		# Code interface

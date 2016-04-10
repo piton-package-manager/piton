@@ -1,7 +1,6 @@
 import os
-from ..utils import python_modules, package_json
+from ..utils import python_modules, package_json, installer
 from ..node import Node
-from ..commands.remove import CommandRemove
 
 class CommandPrune():
 	name = "prune"
@@ -27,4 +26,4 @@ class CommandPrune():
 			if metadata.get("touched", False) == False:
 				unwanted.append(metadata)
 		for metadata in unwanted:
-			CommandRemove.execute(metadata["name"])
+			installer.remove(metadata["name"])

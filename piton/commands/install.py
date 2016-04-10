@@ -1,6 +1,5 @@
 import os
-import pip
-from ..utils import python_modules, package_json, pypi_api, sneak_config
+from ..utils import python_modules, package_json, pypi_api, installer
 from ..utils.version import wanted_version, sort_versions
 
 class CommandInstall():
@@ -26,26 +25,13 @@ class CommandInstall():
 			split = package.split("@")
 			package_name = split[0]
 			package_version = split[1]
-			cls.perform_install(package_name, package_version)
+			installer.install(package_name, package_version)
 			package_json_if_save(save, "^"+package_version)
 		else:
 			latest_version = cls.install_latest(package)
 			if not latest_version:
 				return
 			package_json_if_save(save, "^"+latest_version)
-	@staticmethod
-	def perform_install(package, version=None, upgrade=False):
-		sneak_config.sneak_config_setup()
-		if version:
-			install_item = package+"=="+version
-		else:
-			install_item = package
-		print(install_item)
-		command = ['install', install_item, "--target="+os.path.join(os.getcwd(), "python_modules")]
-		if upgrade:
-			command.append("--upgrade")
-		pip.main(command)
-		sneak_config.sneak_config_remove()
 	@classmethod
 	def install_latest(cls, package):
 		avaliable_versions = pypi_api.get_avaliable_versions(package)
@@ -57,7 +43,7 @@ class CommandInstall():
 			return None
 		versions = list(map(lambda version: version["version"], avaliable_versions))
 		latest_version = sort_versions(versions)[-1:][0]
-		cls.perform_install(package, latest_version, True)
+		installer.install(package, latest_version, True)
 		return latest_version
 	@classmethod
 	def install_all(cls):
@@ -74,4 +60,4 @@ class CommandInstall():
 		for item in install_queue:
 			versions = list(map(lambda md: md["version"], pypi_api.get_avaliable_versions(item["name"])))
 			wanted = wanted_version(item["version"], versions)
-			cls.perform_install(item["name"], wanted)
+			installer.install(item["name"], wanted)
