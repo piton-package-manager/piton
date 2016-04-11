@@ -42,9 +42,7 @@ class CommandInstall():
 	def install(cls, packages, save):
 		def package_json_if_save(save, package_name, version_markup):
 			if save:
-				dependencies = package_json.get_dependencies()
-				dependencies[package_name] = version_markup
-				package_json.write_dependencies(dependencies)
+				package_json.add_dependency(package_name, version_markup)
 		for package in packages:
 			if not package["version"]:
 				result = cls.install_latest(package["name"])

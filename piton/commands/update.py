@@ -21,7 +21,6 @@ class CommandUpdate():
 		for package in packages:
 			if not package in dependencies:
 				continue
-			print(package)
 			package_json_version = dependencies[package]
 			versions_metadata = pypi_api.get_avaliable_versions(package)
 			if not versions_metadata:

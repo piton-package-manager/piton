@@ -20,14 +20,18 @@ class CommandOutdated():
 			package_metadata = python_modules.get_package_metadata(packages, dependency)
 			package_metadata["version_markup"] = version
 			versions_metadata = pypi_api.get_avaliable_versions(dependency)
-			# package_metadata["avaliable_versions_metadata"] = versions_metadata
 			package_metadata["avaliable_versions"] = list(map(lambda version: version["version"], versions_metadata))
 			package_metadata["latest"] = sort_versions(package_metadata["avaliable_versions"])[-1:][0]
-			package_metadata["wanted_version"] = wanted_version(version, package_metadata["avaliable_versions"])
+			if package_metadata["avaliable_versions"]:
+				package_metadata["wanted_version"] = wanted_version(version, package_metadata["avaliable_versions"])
+			else:
+				package_metadata["wanted_version"] = "n/a"
 			if not "version" in package_metadata or (
 				package_metadata["version"] != package_metadata["latest"] or
 				package_metadata["version"] != package_metadata["wanted_version"]):
 				package_metadatas.append(package_metadata)
+		if len(package_metadatas) == 0:
+			return
 		cls.display_outdated(package_metadatas)
 	@staticmethod
 	def display_outdated(metadatas):

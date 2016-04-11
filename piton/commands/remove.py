@@ -16,9 +16,7 @@ class CommandRemove():
 		if not removed:
 			print("package "+package+" is not installed")
 		if save:
-			dependencies = package_json.get_dependencies()
-			dependencies.pop(package, None)
-			package_json.write_dependencies(dependencies)
+			package_json.remove_dependency(package)
 	@classmethod
 	def execute(cls, package):
 		# Code interface
