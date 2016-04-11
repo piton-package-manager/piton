@@ -2,7 +2,7 @@ import os
 from ..utils import python_modules, package_json
 from ..node import Node
 
-class CommandList():
+class Command():
 	name = "list"
 	@staticmethod
 	def decorate_subparser(subparser):

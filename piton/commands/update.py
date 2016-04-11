@@ -1,7 +1,7 @@
 import os
 from ..utils import python_modules, package_json, pypi_api, installer, version
 
-class CommandUpdate():
+class Command():
 	name = "update"
 	@staticmethod
 	def decorate_subparser(subparser):

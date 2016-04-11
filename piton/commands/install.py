@@ -2,7 +2,7 @@ import os
 from ..utils import python_modules, package_json, pypi_api, installer
 from ..utils.version import wanted_version, sort_versions
 
-class CommandInstall():
+class Command():
 	name = "install"
 	@staticmethod
 	def decorate_subparser(subparser):

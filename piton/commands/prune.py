@@ -2,7 +2,7 @@ import os
 from ..utils import python_modules, package_json, installer
 from ..node import Node
 
-class CommandPrune():
+class Command():
 	name = "prune"
 	@staticmethod
 	def decorate_subparser(subparser):

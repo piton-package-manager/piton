@@ -1,7 +1,7 @@
 import os
 import json
 
-class CommandInit():
+class Command():
 	name = "init"
 	@staticmethod
 	def decorate_subparser(subparser):

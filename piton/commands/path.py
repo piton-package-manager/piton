@@ -1,6 +1,6 @@
 import os
 
-class CommandPath():
+class Command():
 	name = "path"
 	@staticmethod
 	def decorate_subparser(subparser):

@@ -1,33 +1,40 @@
 import os
 import sys
 import argparse
-from .commands import CommandInit, CommandOutdated, CommandList, CommandRemove, CommandInstall, CommandPrune, CommandPath, CommandRun, CommandUpdate
+
+command_names = [
+	"init",
+	"install",
+	"list",
+	"outdated",
+	"path",
+	"prune",
+	"remove",
+	"run",
+	"update",
+]
+
+def import_command(command_name):
+	from importlib import import_module
+	try:
+		module = import_module('.commands.'+command_name, __package__)
+		return module.Command
+	except:
+		return None
 
 def main():
-	subcommands = [
-		CommandOutdated,
-		CommandInstall,
-		CommandRemove,
-		CommandList,
-		CommandPrune,
-		CommandInit,
-		CommandPath,
-		CommandRun,
-		CommandUpdate,
-	]
-
 	parser = argparse.ArgumentParser(description=("Python Package Manager"))
-	subparsers = parser.add_subparsers(dest='subcommand')
-
-	for subcommand in subcommands:
-		subparser = subparsers.add_parser(subcommand.name)
-		subcommand.decorate_subparser(subparser)
-
-	args = parser.parse_args()
-
-	for subcommand in subcommands:
-		if args.subcommand == subcommand.name:
-			subcommand.run(args)
+	if len(sys.argv) == 1:
+		pass
+	elif not sys.argv[1] in command_names:
+		pass
+	else:
+		command = import_command(sys.argv[1])
+		subparsers = parser.add_subparsers(dest='subcommand')
+		subparser = subparsers.add_parser(command.name)
+		command.decorate_subparser(subparser)
+		args = parser.parse_args()
+		command.run(args)
 
 if __name__ == '__main__':
 	sys.exit(main())

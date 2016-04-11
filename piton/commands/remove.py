@@ -1,7 +1,7 @@
 import os
 from ..utils import installer, package_json
 
-class CommandRemove():
+class Command():
 	name = "remove"
 	@staticmethod
 	def decorate_subparser(subparser):

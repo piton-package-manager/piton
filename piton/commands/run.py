@@ -2,7 +2,7 @@ import os
 from subprocess import call
 from ..utils import package_json
 
-class CommandRun():
+class Command():
 	name = "run"
 	@staticmethod
 	def decorate_subparser(subparser):

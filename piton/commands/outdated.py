@@ -3,7 +3,7 @@ from ..utils import python_modules, package_json, pypi_api
 from ..utils.version import wanted_version, sort_versions
 from ..utils.tabulate import tabulate
 
-class CommandOutdated():
+class Command():
 	name = "outdated"
 	@staticmethod
 	def decorate_subparser(subparser):
