@@ -1,6 +1,7 @@
 import os
 import sys
 import argparse
+from .utils import display
 
 command_names = [
 	"init",
@@ -25,9 +26,9 @@ def import_command(command_name):
 def main():
 	parser = argparse.ArgumentParser(description=("Python Package Manager"))
 	if len(sys.argv) == 1:
-		pass
+		display.show_main_help()
 	elif not sys.argv[1] in command_names:
-		pass
+		display.show_main_help()
 	else:
 		command = import_command(sys.argv[1])
 		subparsers = parser.add_subparsers(dest='subcommand')
