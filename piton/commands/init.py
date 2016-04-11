@@ -1,11 +1,9 @@
 import os
 import json
+from ..utils.command import BaseCommand
 
-class Command():
+class Command(BaseCommand):
 	name = "init"
-	@staticmethod
-	def decorate_subparser(subparser):
-		pass
 	@classmethod
 	def run(cls, args):
 		cls._run()

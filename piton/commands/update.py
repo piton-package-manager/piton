@@ -1,10 +1,11 @@
 import os
+from ..utils.command import BaseCommand
 from ..utils import python_modules, package_json, pypi_api, installer, version
 
-class Command():
+class Command(BaseCommand):
 	name = "update"
-	@staticmethod
-	def decorate_subparser(subparser):
+	@classmethod
+	def decorate_subparser(cls, subparser):
 		subparser.add_argument('programs', type=str, nargs='*')
 	@classmethod
 	def run(cls, args):

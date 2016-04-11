@@ -1,11 +1,12 @@
 import os
 from subprocess import call
+from ..utils.command import BaseCommand
 from ..utils import package_json
 
-class Command():
+class Command(BaseCommand):
 	name = "run"
-	@staticmethod
-	def decorate_subparser(subparser):
+	@classmethod
+	def decorate_subparser(cls, subparser):
 		subparser.add_argument('script', type=str)
 	@classmethod
 	def run(cls, args):

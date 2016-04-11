@@ -1,12 +1,10 @@
 import os
+from ..utils.command import BaseCommand
 from ..utils import python_modules, package_json
 from ..node import Node
 
-class Command():
+class Command(BaseCommand):
 	name = "list"
-	@staticmethod
-	def decorate_subparser(subparser):
-		pass
 	@classmethod
 	def run(cls, args):
 		cls._run()

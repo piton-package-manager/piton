@@ -1,9 +1,10 @@
 import os
+from ..utils.command import BaseCommand
 
-class Command():
+class Command(BaseCommand):
 	name = "path"
-	@staticmethod
-	def decorate_subparser(subparser):
+	@classmethod
+	def decorate_subparser(cls, subparser):
 		subparser.add_argument("-s", "--save", action='store_true')
 	@classmethod
 	def run(cls, args):

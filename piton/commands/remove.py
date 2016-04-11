@@ -1,10 +1,11 @@
 import os
+from ..utils.command import BaseCommand
 from ..utils import installer, package_json
 
-class Command():
+class Command(BaseCommand):
 	name = "remove"
-	@staticmethod
-	def decorate_subparser(subparser):
+	@classmethod
+	def decorate_subparser(cls, subparser):
 		subparser.add_argument('programs', type=str, nargs='*')
 		subparser.add_argument("-s", "--save", action='store_true')
 	@classmethod

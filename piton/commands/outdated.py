@@ -1,13 +1,11 @@
 import os
+from ..utils.command import BaseCommand
 from ..utils import python_modules, package_json, pypi_api
 from ..utils.version import wanted_version, sort_versions
 from ..utils.tabulate import tabulate
 
-class Command():
+class Command(BaseCommand):
 	name = "outdated"
-	@staticmethod
-	def decorate_subparser(subparser):
-		pass
 	@classmethod
 	def run(cls, args):
 		cls._run()

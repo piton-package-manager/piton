@@ -1,11 +1,12 @@
 import os
+from ..utils.command import BaseCommand
 from ..utils import python_modules, package_json, pypi_api, installer
 from ..utils.version import wanted_version, sort_versions
 
-class Command():
+class Command(BaseCommand):
 	name = "install"
-	@staticmethod
-	def decorate_subparser(subparser):
+	@classmethod
+	def decorate_subparser(cls, subparser):
 		subparser.add_argument('programs', type=str, nargs='*')
 		subparser.add_argument("-s", "--save", action='store_true')
 	@classmethod
