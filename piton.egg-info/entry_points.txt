@@ -1,0 +1,3 @@
+[console_scripts]
+piton = piton.main:main
+

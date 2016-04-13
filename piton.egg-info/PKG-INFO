@@ -1,0 +1,13 @@
+Metadata-Version: 1.1
+Name: piton
+Version: 0.2.2
+Summary: A local python package manager
+Home-page: https://github.com/piton-package-manager/piton
+Author: UNKNOWN
+Author-email: UNKNOWN
+License: LICENSE
+Description: UNKNOWN
+Keywords: package,manager,local
+Platform: UNKNOWN
+Classifier: Programming Language :: Python :: 3.4
+Classifier: Programming Language :: Python :: 3.5
