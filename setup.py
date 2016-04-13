@@ -1,8 +1,10 @@
 from distutils.core import setup
+from setuptools import find_packages
+
 setup(
 	name = 'piton',
 	license='LICENSE',
-	packages = ['piton', 'piton/utils', 'piton/commands'], # this must be the same as the name above
+	packages = find_packages(), # this must be the same as the name above
 	version = '0.2.0',
 	description = 'A local python package manager',
 	url = 'https://github.com/piton-package-manager/piton', # use the URL to the github repo

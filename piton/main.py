@@ -23,6 +23,9 @@ def import_command(command_name):
 	except:
 		return None
 
+MAIN_DIR = os.path.dirname(os.path.realpath(__file__))
+sys.path.append(os.path.join(MAIN_DIR, "lib"))
+
 def main():
 	parser = argparse.ArgumentParser(description=("Python Package Manager"))
 	if len(sys.argv) == 1:

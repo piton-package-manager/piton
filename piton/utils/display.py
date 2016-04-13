@@ -8,9 +8,6 @@ ascii_art = """      (_)_
 slogan = "Package Management should be simple."
 
 usage = """Usage: piton <command>
-where <command> is one of:
-	init, install, list, outdated, path, prune,
-	remove, run, update
 """
 
 future = """
