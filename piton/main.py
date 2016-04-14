@@ -4,6 +4,8 @@ import argparse
 from .utils import display
 
 command_names = [
+	"export",
+	"import",
 	"init",
 	"install",
 	"list",

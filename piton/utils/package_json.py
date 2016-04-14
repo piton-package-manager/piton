@@ -2,6 +2,9 @@ import os
 import json
 from collections import OrderedDict
 
+def exists(package_file_path = os.path.join(os.getcwd(), 'package.json')):
+	return os.path.exists(package_file_path)
+
 def get_dependencies():
 	package_file_path = os.path.join(os.getcwd(), 'package.json')
 	try:
