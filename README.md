@@ -103,4 +103,6 @@ piton install django-debug-toolbar --save
 
 ## Piton Limitations
 
-Piton is all about making package management local. It is not meant to be a repalcement for setuptools or pip. Piton continues to use pip, setuptools, and PYPI in the background.
+Piton is all about making package management local. While it replaces Virtualenv, it is not meant to be a repalcement for setuptools.
+
+Piton continues to use setuptools, and PYPI in the background, along with very limited use of pip. In future versions the dependency on pip will be removed.
