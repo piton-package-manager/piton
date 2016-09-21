@@ -11,9 +11,11 @@ def get_package_info(directory, package_name):
 				dependencies.append(wtf.lower())
 		return dependencies
 	package = Package(installed=True)
+	package.dist_info = package_name
 	with open(os.path.join(directory, package_name, "top_level.txt"),'r') as top_level:
 		for line in top_level:
-			package.top_level_packs.append(line.strip())
+			if line.strip():
+				package.top_level_packs.append(line.strip())
 	with open(os.path.join(directory, package_name, "metadata.json"),'r') as metadata_file:
 		metadata = json.load(metadata_file)
 		package.version = metadata.get("version", "")

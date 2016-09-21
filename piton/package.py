@@ -16,14 +16,12 @@ class Package():
 	top_level_packs = []
 	dist_info = ""
 	def __init__(self, **kwargs):
-		if "name" in kwargs:
-			self.name = kwargs["name"]
-		if "version" in kwargs:
-			self.version = kwargs["version"]
-		if "wanted_version" in kwargs:
-			self.wanted_version = kwargs["wanted_version"]
-		if "installed" in kwargs:
-			self.installed = kwargs["installed"]
+		self.name = kwargs.get("name", "")
+		self.version = kwargs.get("version", "")
+		self.wanted_version = kwargs.get("wanted_version", "")
+		self.installed = kwargs.get("installed", False)
+		self.top_level_packs = kwargs.get("top_level_packs", [])
+		self.avaliable_versions = kwargs.get("avaliable_versions", [])
 	def merge(self, other):
 		self.version = version_xor(self.version, other.version)
 		self.wanted_version = version_xor(self.wanted_version, other.wanted_version)
