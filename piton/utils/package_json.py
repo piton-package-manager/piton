@@ -1,6 +1,7 @@
 import os
 import json
 from collections import OrderedDict
+from ..package import Package
 
 def exists(package_file_path = os.path.join(os.getcwd(), 'package.json')):
 	return os.path.exists(package_file_path)
@@ -13,9 +14,12 @@ def get_dependencies():
 			dependencies = package_dict.get("pythonDependencies", {})
 			dependencies_dev = package_dict.get("pythonDevDependencies", {})
 	except:
-		print("unable to read package.json")
-		return {}
-	return dependencies
+		raise("unable to read package.json")
+	dependencies.update(dependencies_dev)
+	return_arr = []
+	for dependency in dependencies:
+		return_arr.append(Package(name=dependency, wanted_version=dependencies[dependency]))
+	return return_arr
 
 def remove_dependency(dependency_key):
 	package_file_path = os.path.join(os.getcwd(), 'package.json')
@@ -27,8 +31,7 @@ def remove_dependency(dependency_key):
 			file.write(json.dumps(package_dict, indent=2))
 			file.truncate()
 	except:
-		print("unable to write package.json")
-		return
+		raise("unable to write package.json")
 
 def add_dependency(dependency_key, dependency_content):
 	package_file_path = os.path.join(os.getcwd(), 'package.json')
@@ -60,5 +63,3 @@ def get_script(script):
 		if script_name == script:
 			return script_content
 	return None
-
-

@@ -23,7 +23,7 @@ def import_command(command_name):
 		module = import_module('.commands.'+command_name, __package__)
 		return module.Command
 	except:
-		return None
+		raise("unable to load command file")
 
 MAIN_DIR = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(os.path.join(MAIN_DIR, "lib"))
@@ -44,4 +44,3 @@ def main():
 
 if __name__ == '__main__':
 	sys.exit(main())
-

@@ -8,6 +8,8 @@ def get_minor_version(version):
 	return int(version.split(".")[1])
 
 def strip_version(version):
+	if not version:
+		return version
 	if version[0]=="~" or version[0]=="^":
 		return version[1:]
 	return version
@@ -25,6 +27,8 @@ def find_exact_version(version, available_versions):
 
 def wanted_version(version, available_versions):
 	version_without_symbol = strip_version(version)
+	if not version:
+		return sort_versions(available_versions)[-1:][0]
 	if version[0] == "^":
 		available_versions = list(filter(lambda available_version: get_major_version(available_version)==get_major_version(version_without_symbol), available_versions))
 		valid_versions = filter_versions(version_without_symbol, available_versions)

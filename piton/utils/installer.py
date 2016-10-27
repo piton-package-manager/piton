@@ -21,14 +21,13 @@ def remove(package):
 	if not metadata:
 		return False
 	pending_removals = []
-	pending_removals += metadata["top_level"]
-	pending_removals.append(metadata["dist_info"])
+	pending_removals += metadata.top_level_packs
+	pending_removals.append(metadata.dist_info)
 	for pending_removal in pending_removals:
 		try:
-			shutil.rmtree(os.path.join("python_modules", pending_removal))
+			path = os.path.join("python_modules", pending_removal)
+			if os.path.isdir(path):
+				shutil.rmtree(os.path.join("python_modules", pending_removal))
 		except:
-			try:
-				os.remove(os.path.join("python_modules", pending_removal+".py"))
-			except:
-				pass
+			raise("cannot remove")
 	return True
