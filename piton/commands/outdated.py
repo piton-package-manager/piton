@@ -40,7 +40,7 @@ class Command(BaseCommand):
 			table.append([
 				Colors.OKGREEN+package.name+Colors.ENDC,
 				package.version or "n/a",
-				Colors.OKGREEN+package.wanted_version or "n/a"+Colors.ENDC,
-				Colors.PURPLE+package.latest_version or "n/a"+Colors.ENDC
+				Colors.OKGREEN+(package.wanted_version or "n/a")+Colors.ENDC,
+				Colors.PURPLE+(package.latest_version or "n/a")+Colors.ENDC
 			])
 		print(tabulate(table, headings, tablefmt="plain"))
