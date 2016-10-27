@@ -43,12 +43,12 @@ class Command(BaseCommand):
 	def _run():
 		print(os.getcwd())
 		installed_packages = python_modules.get_packages(os.path.join(os.getcwd(), "python_modules"))
-		dependencies = list(map(lambda p: p.name, package_json.get_dependencies()))
+		dependencies = package_json.get_dependencies()
 		tree = Node()
 		unwanted = []
 		for package in installed_packages:
 			package.needed = False
-			if package.name in dependencies:
+			if dependencies.get_by_name(package.name):
 				tree.children.append(Node(package))
 				package.needed = True
 		for node in tree.children:
