@@ -19,11 +19,10 @@ class Command(BaseCommand):
 	@classmethod
 	def install_all_required(cls):
 		installed_package_metadatas = python_modules.get_packages(os.path.join(os.getcwd(), "python_modules"))
-		installed_package_names = list(map(lambda md: md.name, installed_package_metadatas))
 		dependencies = package_json.get_dependencies()
 		install_queue = []
 		for dependency in dependencies:
-			if not dependency.name in installed_package_names:
+			if not installed_package_metadatas.get_by_name(dependency.name):
 				install_queue.append(dependency)
 		cls.install(install_queue)
 	@classmethod

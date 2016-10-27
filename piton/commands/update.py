@@ -26,12 +26,7 @@ class Command(BaseCommand):
 			installer.install(item["name"], item["version"])
 	@classmethod
 	def update_single(cls, package_name, dependencies, installed_package_metadatas, install_queue):
-		found = False
-		for dependency in dependencies:
-			if dependency.name == package_name:
-				found = True
-				wanted_version = dependency.wanted_version
-				break
+		dependency = dependencies.get_by_name(package_name)
 		get_latest = not found
 		versions_metadata = pypi_api.get_avaliable_versions(package_name)
 		if not versions_metadata:
@@ -43,7 +38,7 @@ class Command(BaseCommand):
 			wanted_version = version.wanted_version(dependency.wanted_version, avaliable_versions)
 		for metadata in installed_package_metadatas:
 			if metadata.name == package_name and metadata.version == wanted_version:
-				continue
+				return
 		install_queue.append({
 			"name": package_name,
 			"version": wanted_version

@@ -1,7 +1,7 @@
 import os
 import json
 from collections import OrderedDict
-from ..package import Package
+from ..package import Package, Packages
 
 def exists(package_file_path = os.path.join(os.getcwd(), 'package.json')):
 	return os.path.exists(package_file_path)
@@ -16,10 +16,10 @@ def get_dependencies():
 	except:
 		raise("unable to read package.json")
 	dependencies.update(dependencies_dev)
-	return_arr = []
+	packages = Packages()
 	for dependency in dependencies:
-		return_arr.append(Package(name=dependency, wanted_version=dependencies[dependency]))
-	return return_arr
+		packages.append(Package(name=dependency, wanted_version=dependencies[dependency]))
+	return packages
 
 def remove_dependency(dependency_key):
 	package_file_path = os.path.join(os.getcwd(), 'package.json')

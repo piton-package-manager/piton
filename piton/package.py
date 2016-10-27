@@ -1,4 +1,6 @@
-__all__ = ["Package"]
+__all__ = ["Package", "Packages"]
+from .utils import pypi_api
+from .utils.version import wanted_version, sort_versions
 
 def version_xor(v1, v2):
 	if v1 != "" and v2 != "":
@@ -29,3 +31,16 @@ class Package():
 		self.dependencies = self.dependencies or other.dependencies
 		self.top_level_packs = self.top_level_packs or other.top_level_packs
 		self.dist_info = self.dist_info or other.dist_info
+	def get_wanted_version(self):
+		versions_metadata = pypi_api.get_avaliable_versions(self.name)
+		self.avaliable_versions = list(map(lambda version: version["version"], versions_metadata))
+		self.latest_version = sort_versions(self.avaliable_versions)[-1:][0]
+		if len(self.avaliable_versions):
+			self.wanted_version = wanted_version(self.wanted_version, self.avaliable_versions)
+
+class Packages(list):
+	def get_by_name(self, package_name):
+		for package in self:
+			if package.name == package_name:
+				return package
+		return None
