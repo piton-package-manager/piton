@@ -1,6 +1,7 @@
 __all__ = ["Package", "Packages"]
 from .utils import pypi_api
 from .utils.version import wanted_version, sort_versions
+from .utils.exception import OperationException
 
 def version_xor(v1, v2):
 	if v1 != "" and v2 != "":
@@ -26,6 +27,14 @@ class Package():
 		self.installed = kwargs.get("installed", False)
 		self.top_level_packs = kwargs.get("top_level_packs", [])
 		self.avaliable_versions = kwargs.get("avaliable_versions", [])
+	def __repr__(self):
+		return '\n'.join([
+			"---------------------------",
+			"name: {}".format(self.name),
+			"version: {}".format(self.version),
+			"wanted_version: {}".format(self.wanted_version),
+			"installed: {}".format(self.installed)
+		])
 	def merge(self, other):
 		self.version = version_xor(self.version, other.version)
 		self.wanted_version = version_xor(self.wanted_version, other.wanted_version)
@@ -40,14 +49,14 @@ class Package():
 		self.latest_version = sort_versions(self.avaliable_versions)[-1:][0]
 		if len(self.avaliable_versions):
 			self.wanted_version = wanted_version(self.wanted_rule, self.avaliable_versions)
-	def __repr__(self):
-		return '\n'.join([
-			"---------------------------",
-			"name: {}".format(self.name),
-			"version: {}".format(self.version),
-			"wanted_version: {}".format(self.wanted_version),
-			"installed: {}".format(self.installed)
-		])
+	def install(self):
+		from .utils import installer
+		if not self.name or not self.wanted_version:
+			raise OperationException
+		return installer.install(self.name, self.wanted_version)
+	def remove(self):
+		from .utils import installer
+		return installer.remove(self.name)
 
 class Packages(list):
 	def get_by_name(self, package_name):

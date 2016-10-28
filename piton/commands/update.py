@@ -1,4 +1,3 @@
-import os
 from ..utils.command import BaseCommand
 from ..utils import pypi_api, installer, version
 from ..utils.info import get_packages, Sources

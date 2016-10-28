@@ -45,6 +45,8 @@ piton/lib/readchar/readchar_windows.py
 piton/utils/__init__.py
 piton/utils/command.py
 piton/utils/display.py
+piton/utils/exception.py
+piton/utils/info.py
 piton/utils/installer.py
 piton/utils/package_json.py
 piton/utils/pypi_api.py

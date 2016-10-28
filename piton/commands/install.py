@@ -1,6 +1,5 @@
-import os
 from ..utils.command import BaseCommand
-from ..utils import package_json, installer
+from ..utils import package_json
 from ..utils.version import wanted_version, sort_versions
 from ..utils.info import get_packages, Sources
 from ..package import Package
@@ -44,7 +43,7 @@ class Command(BaseCommand):
 	def install_single(cls, package):
 		if not package.wanted_version:
 			package.get_wanted_version()
-		result = installer.install(package.name, package.wanted_version)
+		result = package.install()
 		if result:
 			package.version = package.wanted_version
 			package.installed = True
