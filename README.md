@@ -106,3 +106,14 @@ piton install django-debug-toolbar --save
 Piton is all about making package management local. While it replaces Virtualenv, it is not meant to be a repalcement for setuptools.
 
 Piton continues to use setuptools, and PYPI in the background, along with very limited use of pip. In future versions the dependency on pip will be removed.
+
+## Developers
+
+Piton can be run with develop_entry.py without installing.
+
+Deployment:
+```
+# Change version number in setup.py
+python3 setup.py sdist upload -r pypi
+# Amend commit with egg-info
+```
