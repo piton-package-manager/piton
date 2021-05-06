@@ -13,8 +13,9 @@ def install(package, version=None, upgrade=False):
 	command = ['install', install_item, "--upgrade", "--target="+os.path.join(os.getcwd(), "python_modules")]
 	if upgrade:
 		command.append("--upgrade")
-	pip.main(command)
+	exit_code=pip.main(command)
 	sneak_config.sneak_config_remove()
+	return exit_code==0
 
 def remove(package):
 	metadata = python_modules.get_package(os.path.join(os.getcwd(), "python_modules"), package)
